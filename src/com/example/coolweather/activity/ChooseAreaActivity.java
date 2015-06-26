@@ -6,7 +6,9 @@ import java.util.List;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.Window;
@@ -54,10 +56,24 @@ public class ChooseAreaActivity extends Activity {
 	 */
 	private int currentLevel;
 
+	/**
+	 * 是否从WeatherActivity中跳转过来。
+	 */
+	private boolean isFromWeatherActivity;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
+		isFromWeatherActivity = getIntent().getBooleanExtra(
+				"from_weather_activity", false);
+		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+		if(pref.getBoolean("city_selected", false) && !isFromWeatherActivity){
+			Intent intent = new Intent(this, WeatherActivity.class);
+			startActivity(intent);
+			finish();
+			return;
+		}
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.choose_area);
 		titleText = (TextView) findViewById(R.id.title_text);
@@ -71,23 +87,25 @@ public class ChooseAreaActivity extends Activity {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
-				switch(currentLevel){
+				switch (currentLevel) {
 				case LEVEL_PROVINCE:
 					selectedProvince = provinces.get(position);
 					queryCities();
 					break;
-				case LEVEL_CITY : 
+				case LEVEL_CITY:
 					selectedCity = cities.get(position);
 					queryCounties();
 					break;
 				case LEVEL_COUNTY:
-					Intent intent = new Intent(ChooseAreaActivity.this,WeatherActivity.class);
-					intent.putExtra("county_code", counties.get(position).getCounty_code());
+					Intent intent = new Intent(ChooseAreaActivity.this,
+							WeatherActivity.class);
+					intent.putExtra("county_code", counties.get(position)
+							.getCounty_code());
 					startActivity(intent);
 					finish();
 					break;
 				default:
-						break;
+					break;
 				}
 			}
 		});
@@ -235,17 +253,21 @@ public class ChooseAreaActivity extends Activity {
 			pDialog.dismiss();
 		}
 	}
-	
+
 	/**
 	 * 捕获Back按键，根据当前的级别来判断，此时应该返回市列表、省列表、还是直接退出。
 	 */
 	@Override
 	public void onBackPressed() {
-		switch(currentLevel){
+		switch (currentLevel) {
 		case LEVEL_PROVINCE:
-			finish();
+			if(isFromWeatherActivity){
+				Intent intent = new Intent(this,WeatherActivity.class);
+				startActivity(intent);
+			}
+				finish();
 			break;
-		case LEVEL_CITY : 
+		case LEVEL_CITY:
 			queryProvinces();
 			break;
 		case LEVEL_COUNTY:
