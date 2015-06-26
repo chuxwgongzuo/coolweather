@@ -13,7 +13,7 @@ import com.example.coolweather.model.County;
 import com.example.coolweather.model.Province;
 
 public class CoolWeatherDB {
-	public static final String DB_NAME = "";
+	public static final String DB_NAME = "cool_weather";
 	public static final int VERSION = 1;
 
 	private static CoolWeatherDB coolWeatherDB;
