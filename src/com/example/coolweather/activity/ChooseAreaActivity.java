@@ -80,14 +80,14 @@ public class ChooseAreaActivity extends Activity {
 					selectedCity = cities.get(position);
 					queryCounties();
 					break;
-//				case LEVEL_COUNTY:
-//					Intent intent = new Intent(ChooseAreaActivity.this,);
-//					intent.putExtra("countycode", counties.get(position).getCounty_code());
-//					startActivity(intent);
-//					finish();
-//					break;
-//				default:
-//						break;
+				case LEVEL_COUNTY:
+					Intent intent = new Intent(ChooseAreaActivity.this,WeatherActivity.class);
+					intent.putExtra("county_code", counties.get(position).getCounty_code());
+					startActivity(intent);
+					finish();
+					break;
+				default:
+						break;
 				}
 			}
 		});
